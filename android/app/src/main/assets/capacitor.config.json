@@ -1,0 +1,7 @@
+{
+  "appId": "com.urdev.friendsthatmatch",
+  "appName": "friendsthatmatch",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "build"
+}
