@@ -10,25 +10,7 @@ let db = admin.firestore();
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
 exports.helloWorld = functions.https.onRequest((request, response) => {
-    const accountSid = 'AC4f9253cebc7c889a89d6b449e701bfa7';
-    const authToken = '96e434831128d8cb7cf27212a7ca08df';
-    const client = require('twilio')(accountSid, authToken);
 
-    const randomNumber = Math.floor(1000 + Math.random() * 9000);
-
-    let docRef = db.collection('verification-codes').doc(request.query.pn);
-
-    let setDoc = docRef.set({
-        code: randomNumber,
-    });
-
-    client.messages
-    .create({
-        body: `Your Friends That Match Verification Code is ${randomNumber}`,
-        from: '+14702645321',
-        to: `+1${request.query.pn}`
-    })
-    .then(message => console.log(message.sid)).then(res => response.send(200)).catch(err => console.log(err));
  });
 
  exports.sendVerificationCode = functions.https.onRequest((request, response) => {
@@ -51,7 +33,7 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
     .create({
         body: `Your Friends That Match Verification Code is ${randomNumber}`,
         from: '+14702645321',
-        to: `+1${request.query.pn}`
+        to: `${request.query.pn}`
     })
     .then(message => console.log(message.sid)).then(res => response.send(200)).catch(err => console.log(err));
  });
@@ -66,7 +48,7 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
     if (request.query.vc*1 === doc.data().code*1) {
         console.log(request.query.uid)
         admin.auth().updateUser(request.query.uid, {
-            phoneNumber: `+1${request.query.pn}`,
+            phoneNumber: `${request.query.pn}`,
           })
             .then(function(userRecord) {
               // See the UserRecord reference doc for the contents of userRecord.

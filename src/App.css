@@ -9,12 +9,8 @@ div {
   justify-content: center;
 }
 ion-img {
-  height: 100px;
-  width: 100px;
-  padding: 15px;
-  border: 2px solid #FFA597;
-  border-radius: 100%;
-  box-shadow: 3px 3px 3px rgba(0, 0, 0, .25)
+  height: 150px;
+  width: 150px;
 }
 .login-grid {
   height: 100%;

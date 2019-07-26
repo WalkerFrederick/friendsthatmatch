@@ -2,6 +2,9 @@ import React from 'react';
 import firebase from 'firebase'
 import fire from './fire';
 
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
+
 import { IonCard, IonContent, IonItem, IonInput, IonButton, IonGrid, IonRow, IonCol, IonImg } from '@ionic/react'
 import '@ionic/core/css/ionic.bundle.css'
 import './App.css'
@@ -21,7 +24,7 @@ class App extends React.Component {
      verificationCode: "",
      onStep: 1,
      userLoginState: "logged Out",
-     loginError: "Email is already used in an another account",
+     loginError: "",
     
     }; // <- set up react state
   }
@@ -37,12 +40,10 @@ class App extends React.Component {
       password: this.passwordInput.value,
     })
 
-    let accountExists = false;
  
        
-      if (accountExists === false) {
         auth.createUserWithEmailAndPassword(this.emailInput.value, this.passwordInput.value).catch(err => {
-          console.log(err)
+          this.setState({loginError: err.message})
 
           return err
         }).then(res => {
@@ -66,9 +67,8 @@ class App extends React.Component {
         this.setState({onStep: this.state.onStep + 3 , userLoginState: "USER IS LOGGED IN AND VERIFIED"})
       }
 
-      }).catch(err => console.log(err))
+      }).catch(err => this.setState({loginError: err.message}))
       })
-      }
 
     auth.onAuthStateChanged(authState => console.log(authState))
     this.emailInput.value = ''; this.passwordInput.value = '';
@@ -77,16 +77,24 @@ class App extends React.Component {
   addPhoneNumber(e){
     e.preventDefault(); // <- prevent form submit from reloading the page
 
+    if (toString(this.phoneNumberInput.value).length < 10) {
+      this.setState({loginError: "Minimum of 10 digits"})
+      throw "MIN 10 DIGITS"
+    } else {
+
     this.setState({onStep: this.state.onStep + 1})
 
+    let parsedPhoneNum = parsePhoneNumberFromString( this.phoneNumberInput.value, 'US').number
+    
     this.setState({
-      phoneNumber: this.phoneNumberInput.value
+      phoneNumber: parsedPhoneNum
     })
-    fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/sendVerificationCode?pn=${this.phoneNumberInput.value}`).then(res => {
+    fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/sendVerificationCode?pn=${parsedPhoneNum}`).then(res => {
     })
     
 
     this.phoneNumberInput.value = '';
+  }
   }
 
   verifyPhone(e) {
@@ -102,10 +110,10 @@ class App extends React.Component {
         return 1;
       }
       else {
-        this.setState({userLoginState: "USER AUTH FAILED"})
+        this.setState({userLoginState: "USER AUTH FAILED", loginError: "code not valid"})
       }
       
-    }).catch(err => console.log(err, err.status))
+    }).catch(err => this.setState({userLoginState: "USER AUTH FAILED", loginError: "code not valid"}))
   }
 
   render() {
@@ -134,8 +142,9 @@ class App extends React.Component {
             <IonCol size="12"> 
               <h1>Step 2</h1>
               <p>Add your phone number</p>
+              <h2 className="login-form-error">{this.state.loginError}</h2>
               <form onSubmit={this.addPhoneNumber.bind(this)} className="ion-text-center">
-              <IonCard mode="ios"><IonInput className="ion-text-left" type="phone-number" placeholder="Phone Number" ref={ el => this.phoneNumberInput = el }/></IonCard>
+              <IonCard mode="ios"><IonInput className="ion-text-left" inputMode="tel" required="true" type="tel" pattern=".{10,}" placeholder="Phone Number" ref={ el => this.phoneNumberInput = el }/></IonCard>
               <IonButton mode="ios" expand="full" type="submit">Send Verification Text</IonButton>
 
               </form>
@@ -145,6 +154,7 @@ class App extends React.Component {
             <IonCol size="12"> 
               <h1>Step 3</h1>
               <p>Verify Phone Number</p>
+              <h2 className="login-form-error">{this.state.loginError}</h2>
               <form onSubmit={this.verifyPhone.bind(this)} className="ion-text-center">
               <IonCard mode="ios"><IonInput className="ion-text-left" type="text" placeholder="Verification Code" ref={ el => this.verificationCodeInput = el }/></IonCard>
               <IonButton mode="ios" expand="full" type="submit">Verify</IonButton>

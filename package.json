@@ -8,6 +8,7 @@
     "@capacitor/core": "^1.1.1",
     "@ionic/react": "^0.0.7",
     "firebase": "^6.3.1",
+    "libphonenumber-js": "^1.7.21",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router": "^5.0.1",
