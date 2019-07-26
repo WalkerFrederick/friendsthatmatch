@@ -9,12 +9,14 @@ div {
   justify-content: center;
 }
 ion-img {
-  height: 150px;
-  width: 150px;
+  height: 120px;
+  width: 120px;
 }
 .login-grid {
   height: 100%;
   overflow: scroll;
+  background: rgb(255,165,151);
+  background: linear-gradient(0deg, rgba(255,165,151,0.3) 0%, rgba(255,255,255,0) 10%, rgba(255,255,255,0) 90%, rgba(255,165,151,0.3) 100%);
 }
 .login-row {
   height: 25%;
@@ -47,6 +49,10 @@ ion-img {
   border-radius: .15rem;
   font-size: 1.2rem !important;
   --background: #FFA597 !important;
+}
+.login-row .button-reverse {
+  --background: none !important;
+  --color: #FFA597;
 }
 .login-row .login-form-error {
   color: #F56565;
