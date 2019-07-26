@@ -2,16 +2,28 @@ import React from 'react';
 import firebase from 'firebase'
 import fire from './fire';
 
-import { IonCard, IonContent, IonItem, IonInput, IonButton, IonGrid, IonRow, IonCol } from '@ionic/react'
+import { IonCard, IonContent, IonItem, IonInput, IonButton, IonGrid, IonRow, IonCol, IonImg } from '@ionic/react'
 import '@ionic/core/css/ionic.bundle.css'
 import './App.css'
+
+import logo from './static/logo.png'
 
 var auth = firebase.auth();
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {user: "", email: "", password: ""}; // <- set up react state
+    this.state = {
+     uid: "",
+     email: "", 
+     password: "", 
+     phoneNumber: "",
+     verificationCode: "",
+     onStep: 1,
+     userLoginState: "logged Out",
+     loginError: "Email is already used in an another account",
+    
+    }; // <- set up react state
   }
   componentWillMount(){
    
@@ -25,34 +37,121 @@ class App extends React.Component {
       password: this.passwordInput.value,
     })
 
-    auth.createUserWithEmailAndPassword(this.emailInput.value, this.passwordInput.value).catch(err => {
-      console.log(err)
-      return auth.signInWithEmailAndPassword(this.state.email, this.state.password)
-    }).then(res => {
-        this.setState({user: res.user})
-    })
+    let accountExists = false;
+ 
+       
+      if (accountExists === false) {
+        auth.createUserWithEmailAndPassword(this.emailInput.value, this.passwordInput.value).catch(err => {
+          console.log(err)
+
+          return err
+        }).then(res => {
+            this.setState({uid: res.user.uid})
+            return res.user
+        }).then(res => {
+          if (res.phoneNumber !== null) {
+            console.log("logged in")
+          }
+          else {
+            this.setState({onStep: this.state.onStep + 1})
+          }
+      }).catch(err => {
+        auth.signInWithEmailAndPassword(this.state.email,  this.state.password).then(res => {
+
+      if (res.user.phoneNumber === null) {
+        this.setState({uid: res.user.uid})
+        this.setState({onStep: this.state.onStep + 1})
+      }
+      else {
+        this.setState({onStep: this.state.onStep + 3 , userLoginState: "USER IS LOGGED IN AND VERIFIED"})
+      }
+
+      }).catch(err => console.log(err))
+      })
+      }
+
     auth.onAuthStateChanged(authState => console.log(authState))
     this.emailInput.value = ''; this.passwordInput.value = '';
   }
+
+  addPhoneNumber(e){
+    e.preventDefault(); // <- prevent form submit from reloading the page
+
+    this.setState({onStep: this.state.onStep + 1})
+
+    this.setState({
+      phoneNumber: this.phoneNumberInput.value
+    })
+    fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/sendVerificationCode?pn=${this.phoneNumberInput.value}`).then(res => {
+    })
+    
+
+    this.phoneNumberInput.value = '';
+  }
+
+  verifyPhone(e) {
+    e.preventDefault();
+
+    this.setState({
+      verificationCode: this.verificationCodeInput.value
+    })
+
+    fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/checkVerificationCode?pn=${this.state.phoneNumber}&vc=${this.verificationCodeInput.value}&uid=${this.state.uid}`).then(res => {
+      if (res.status === 200) {
+        this.setState({onStep: this.state.onStep + 1, userLoginState: "USER IS LOGGED IN AND VERIFIED"})
+        return 1;
+      }
+      else {
+        this.setState({userLoginState: "USER AUTH FAILED"})
+      }
+      
+    }).catch(err => console.log(err, err.status))
+  }
+
   render() {
     return (
       <div>
         <IonGrid className="login-grid">
-        <IonRow className="login-row ion-align-items-center">
-            <IonCol size="12"  class="ion-text-center">
-              {this.state.user.uid}
+        <IonRow className="login-row ion-align-items-center ion-justify-content-center">
+            <IonCol size="12"  class="ion-text-center img-col">
+              <IonImg src={logo}></IonImg>
             </IonCol>
           </IonRow>
-          <IonRow className="login-row ion-align-items-end">
-            <IonCol size="12">
-              <form onSubmit={this.createAccount.bind(this)}>
-              <IonCard mode="ios"><IonInput type="text" placeholder="Email" ref={ el => this.emailInput = el }/></IonCard>
-              <IonCard mode="ios"><IonInput type="password" placeholder="Password" ref={ el => this.passwordInput = el }/></IonCard>
+          <IonRow id="login-form-row" className={`login-row ion-align-items-start ${this.state.onStep === 1 ? `` : `hidden-step`}`}>
+            <IonCol size="12"> 
+              <h1>Step 1</h1>
+              <p>Create your account</p>
+              <h2 className="login-form-error">{this.state.loginError}</h2>
+              <form onSubmit={this.createAccount.bind(this)} className="ion-text-center">
+              <IonCard mode="ios"><IonInput className="ion-text-left" type="text" placeholder="Email" ref={ el => this.emailInput = el }/></IonCard>
+              <IonCard mode="ios"><IonInput className="ion-text-left" type="password" placeholder="Password" ref={ el => this.passwordInput = el }/></IonCard>
               <IonButton mode="ios" expand="full" type="submit">Create Account</IonButton>
+
               </form>
             </IonCol>
           </IonRow>
-          <IonRow className="login-row ion-align-items-start">
+          <IonRow id="login-form-row" className={`login-row ion-align-items-start ${this.state.onStep === 2 ? `` : `hidden-step`}`}>
+            <IonCol size="12"> 
+              <h1>Step 2</h1>
+              <p>Add your phone number</p>
+              <form onSubmit={this.addPhoneNumber.bind(this)} className="ion-text-center">
+              <IonCard mode="ios"><IonInput className="ion-text-left" type="phone-number" placeholder="Phone Number" ref={ el => this.phoneNumberInput = el }/></IonCard>
+              <IonButton mode="ios" expand="full" type="submit">Send Verification Text</IonButton>
+
+              </form>
+            </IonCol>
+          </IonRow>
+          <IonRow id="login-form-row" className={`login-row ion-align-items-start ${this.state.onStep === 3 ? `` : `hidden-step`}`}>
+            <IonCol size="12"> 
+              <h1>Step 3</h1>
+              <p>Verify Phone Number</p>
+              <form onSubmit={this.verifyPhone.bind(this)} className="ion-text-center">
+              <IonCard mode="ios"><IonInput className="ion-text-left" type="text" placeholder="Verification Code" ref={ el => this.verificationCodeInput = el }/></IonCard>
+              <IonButton mode="ios" expand="full" type="submit">Verify</IonButton>
+              </form>
+            </IonCol>
+          </IonRow>
+          <IonRow id="login-row-bottom" className="login-row ion-align-items-center">
             <IonCol size="12" class="ion-text-center">
               Forgot password?
               <span className="hr"></span>

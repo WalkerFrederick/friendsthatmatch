@@ -4,11 +4,35 @@
 div {
   height: 100%;
 }
+.img-col {
+  display: flex;
+  justify-content: center;
+}
+ion-img {
+  height: 100px;
+  width: 100px;
+  padding: 15px;
+  border: 2px solid #FFA597;
+  border-radius: 100%;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, .25)
+}
 .login-grid {
   height: 100%;
+  overflow: scroll;
 }
 .login-row {
-  height: 33%;
+  height: 25%;
+  min-height: 100px;
+}
+#login-form-row {
+  height: 50%;
+  min-height: 300px;
+}
+#login-bottom-row {
+  height: 100px;
+}
+.login-row h1 {
+  color: #FFA597;
 }
 .login-row * {
   margin: 15px 0;
@@ -25,12 +49,23 @@ div {
 }
 .login-row ion-button{
   border-radius: .15rem;
+  font-size: 1.2rem !important;
   --background: #FFA597 !important;
 }
+.login-row .login-form-error {
+  color: #F56565;
+  font-size: 1rem;
+}
+
 
 .hr {
   display: block;
   height: 1px;
   background: lightgray;
   width: 100%;
+}
+
+.hidden-step {
+  display: none;
+  visibility: hidden;
 }
