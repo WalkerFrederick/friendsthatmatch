@@ -142,7 +142,7 @@ class LoginAccount extends React.Component {
               <IonButton mode="ios" expand="full" type="submit">Login</IonButton>
               <IonButton mode="ios" class="button-reverse" expand="full" onClick={e => {
                     e.preventDefault();
-                    this.props.history.push('/');
+                    this.props.history.push('/createaccount');
                 }}>Go Back</IonButton>
               </form>
             </IonCol>
