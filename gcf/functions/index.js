@@ -46,25 +46,31 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
     let getDoc = docRef.get()
   .then(doc => {
     if (request.query.vc*1 === doc.data().code*1) {
-        console.log(request.query.uid)
-        admin.auth().updateUser(request.query.uid, {
-            phoneNumber: `${request.query.pn}`,
-          })
-            .then(function(userRecord) {
-              // See the UserRecord reference doc for the contents of userRecord.
-              console.log('Successfully updated user', userRecord.toJSON());
-              return;
-            })
-            .catch(function(error) {
-              console.log('Error updating user:', error);
-            });
-
         response.status(200).send({"data": Date.now()})
-
-
     } else {
         response.status(401).send()
     }
 
     return 500
  }).catch(err => console.log(err))})
+
+ exports.addPhoneNumber = functions.https.onRequest((request, response) => {
+  response.set('Access-Control-Allow-Origin', "*")
+  response.set('Access-Control-Allow-Methods', 'GET, POST')
+
+  admin.auth().updateUser(request.query.uid, {
+      phoneNumber: `+${request.query.pn}`,
+    })
+      .then(function(userRecord) {
+        // See the UserRecord reference doc for the contents of userRecord.
+        console.log('Successfully updated user', userRecord.toJSON());
+        return;
+      })
+      .catch(function(error) {
+        console.log(request.query.pn, 'Error updating user:', error);
+      });
+
+  response.status(200).send({"data": Date.now()})
+
+})
+
