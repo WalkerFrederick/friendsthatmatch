@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider, connect } from 'react-redux'
 import { updateAuthIn, updateAuthOut } from '../actions/authActions'
 import store from '../store'
-import { BrowserRouter as Router, Route, withRouter, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, withRouter, Redirect, Switch } from 'react-router-dom';
 
 import firebase from 'firebase'
 
@@ -21,6 +21,28 @@ import '@ionic/core/css/ionic.bundle.css'
 var auth = firebase.auth();
 
 
+const LoginRequiredRoute = ({ component: Component, auth, ...rest }) => (
+  <>
+  {console.log(auth)}
+  <Route {...rest} render={props => (
+    auth ? (
+      <Component {...props} />
+    ) : (
+      <Redirect from={'/'} to={'/createaccount'} />
+    )
+  )} />
+  </>
+)
+
+const authRoutes = ({ component: Component, ...rest }) => (
+  <Switch>
+        <Route exact path="/test/" component={Home} />
+        <Route exact path="/home/" component={Home} />
+        <Redirect exact from="/" to="/home" />
+  </Switch>
+)
+
+
 class AuthHelper extends React.Component {
 
   constructor(props) {
@@ -30,7 +52,6 @@ class AuthHelper extends React.Component {
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
-      console.log(this.props.auth)
       if (user) {
           this.props.updateAuthIn()
         
@@ -38,8 +59,6 @@ class AuthHelper extends React.Component {
         console.log("ERROR")
         this.props.updateAuthOut()
       }
-      console.log(this.props.auth)
-
     });
   }
   
@@ -50,17 +69,15 @@ class AuthHelper extends React.Component {
       <div className="App">
         {console.log(this.props.auth)}
             <IonApp>
+            {this.props.auth}
+
             <IonReactRouter>
             <IonPage id="main">
-              <IonRouterOutlet>
-              <Route exact path="/createaccount" component={CreateAccount} />
-              <Route exact path="/login" component={LoginAccount} />
-              <Route path="/" render={(props) => (
-                this.props.auth === true
-                  ? <Home />
-                  : <Redirect to='/createaccount' />
-              )} />
-              </IonRouterOutlet>
+            <Route path="/createaccount/" component={CreateAccount} />
+            <Route path="/login/" component={LoginAccount} />
+            <LoginRequiredRoute  component={authRoutes} auth={this.props.auth}/>
+
+              
             </IonPage>
             </IonReactRouter>
             </IonApp>
@@ -72,7 +89,9 @@ class AuthHelper extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth.isAuth
 })
 
-export default withRouter(connect(mapStateToProps, { updateAuthIn, updateAuthOut })(AuthHelper));
+export default connect(mapStateToProps, { updateAuthIn, updateAuthOut }, null, {
+  pure: false
+})(AuthHelper, LoginRequiredRoute, authRoutes);

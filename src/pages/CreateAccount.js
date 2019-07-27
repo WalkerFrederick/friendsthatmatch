@@ -1,5 +1,7 @@
 import React from 'react';
 import firebase from 'firebase'
+import { connect } from 'react-redux'
+
 import fire from '../fire';
 import {Redirect} from 'react-router-dom'
 
@@ -116,7 +118,7 @@ class CreateAccount extends React.Component {
   }
 
   render() {
-    if (this.state.onStep === 4) {
+    if (this.props.auth === true) {
       return  <Redirect to='/' />
     }
     return (
@@ -179,4 +181,8 @@ class CreateAccount extends React.Component {
   )}
 }
 
-export default CreateAccount;
+const mapStateToProps = state => ({
+  auth: state.auth.isAuth
+})
+
+export default connect(mapStateToProps)(CreateAccount);

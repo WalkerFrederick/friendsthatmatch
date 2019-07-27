@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider, connect } from 'react-redux'
 import { updateAuthIn, updateAuthOut } from './actions/authActions'
 import store from './store'
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, withRouter, } from 'react-router-dom';
 
 import firebase from 'firebase'
 
@@ -11,7 +11,7 @@ import CreateAccount from './pages/CreateAccount'
 import LoginAccount from './pages/loginAccount'
 import Home from './pages/Home'
 
-import AuthHelper from './components/AuthHelper'
+import AppRouter from './components/AppRouter'
 import PrivateRoute from './components/PrivateRoute'
 
 import { IonCard, IonApp, IonPage, IonRouterOutlet, IonReactRouter } from '@ionic/react'
@@ -37,7 +37,7 @@ class App extends React.Component {
     return (
       <Provider store={store}>
         <Router>
-          <AuthHelper></AuthHelper>
+          <AppRouter/>
         </Router>
       </Provider>
     )

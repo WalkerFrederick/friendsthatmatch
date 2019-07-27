@@ -1,5 +1,7 @@
 import {UPDATE_AUTH_IN, UPDATE_AUTH_OUT} from '../actions/types'
 
+
+
 const initialState = {
     isAuth: false,
 }
@@ -7,9 +9,9 @@ const initialState = {
 export default function(state = initialState, action) {
     switch(action.type) {
         case UPDATE_AUTH_IN: 
-           return action.payload
+           return {...state, isAuth: action.payload}
         case UPDATE_AUTH_OUT: 
-           return action.payload
+            return {...state, isAuth: action.payload}
         default:
             return state
     }
