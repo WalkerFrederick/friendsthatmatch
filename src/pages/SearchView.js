@@ -2,16 +2,17 @@ import React from 'react';
 import firebase from 'firebase'
 import fire from '../fire';
 
-import '@ionic/core/css/ionic.bundle.css'
-import '../App.css'
 
 import PageLayout from '../components/PageLayout'
 
-import AuthHelper from '../components/AuthHelper'
+import '@ionic/core/css/ionic.bundle.css'
+import '../App.css'
 
 
 
-class Home extends React.Component {
+var auth = firebase.auth();
+
+class SearchView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,10 +25,10 @@ class Home extends React.Component {
 
   render() {
     return (
-    <PageLayout>
-    HOME    
-    </PageLayout> 
+      <PageLayout>
+      SEARCH    
+      </PageLayout> 
   )}
 }
 
-export default Home;
+export default SearchView;

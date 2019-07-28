@@ -71,3 +71,33 @@ ion-img {
   display: none;
   visibility: hidden;
 }
+
+.application ion-toolbar{
+  --min-height: 56px;
+  border-bottom: .5px solid lightgrey;
+}
+ion-toolbar .toolbar-container {
+  height: 100%;
+}
+.application ion-avatar {
+  height: 32px;
+  width: 32px;
+}
+.application ion-tab-button {
+  --ripple-color: #FFA597;
+}
+
+
+
+
+/* SETTINGS STYLES */
+
+
+#sign-out-button {
+  --background: none !important;
+  --color: #3880ff;
+}
+#delete-account-button {
+  --background: none !important;
+  --color: #F56565;
+}

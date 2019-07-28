@@ -7,27 +7,22 @@ import '../App.css'
 
 import PageLayout from '../components/PageLayout'
 
-import AuthHelper from '../components/AuthHelper'
+var auth = firebase.auth();
 
-
-
-class Home extends React.Component {
+class ListView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
     
     }; // <- set up react state
   }
-  componentWillMount(){
-   
-  }
 
   render() {
     return (
-    <PageLayout>
-    HOME    
-    </PageLayout> 
+      <PageLayout>
+        hello world
+      </PageLayout>
   )}
 }
 
-export default Home;
+export default ListView;

@@ -32,82 +32,68 @@ class CreateAccount extends React.Component {
     }; // <- set up react state
   }
 
-  createAccount(e){
-    e.preventDefault(); // <- prevent form submit from reloading the page
-    /* Send the message to Firebase */
 
+  // CREATE ACCOUNT HANDLER - STORE EMAIL AND PASSWORD IN STATE
+  createAccount(e){
+    // prevent form submit from reloading the page    
+    e.preventDefault();
+
+    // STORE INPUT IN STATE
     this.setState( {
       email: this.emailInput.value,
       password: this.passwordInput.value,
     })
 
- 
-       
-        auth.createUserWithEmailAndPassword(this.emailInput.value, this.passwordInput.value).catch(err => {
-          this.setState({loginError: err.message})
-
-          return err
-        }).then(res => {
-            this.setState({uid: res.user.uid})
-            return res.user
-        }).then(res => {
-          if (res.phoneNumber !== null) {
-            console.log("logged in")
-          }
-          else {
-            this.setState({onStep: this.state.onStep + 1})
-          }
+    // TRY TO SIGN IN WITH EMAIL AND PASSWORD, CATCH IF THEY ARE NEW!
+    auth.signInWithEmailAndPassword(this.emailInput.value, this.passwordInput.value).then(res => { 
+      // CONFIRM THAT USER HAS A PHONE NUMBER ASSOCIATED WITH ACCOUNT
+        if (res.phoneNumber === null) {
+          throw "USER's PHONE NUMBER IS NOT VERIFIED"
+        }
       }).catch(err => {
-        auth.signInWithEmailAndPassword(this.state.email,  this.state.password).then(res => {
-
-      if (res.user.phoneNumber === null) {
-        this.setState({uid: res.user.uid})
-        this.setState({onStep: this.state.onStep + 1})
-      }
-      else {
-        this.setState({onStep: this.state.onStep + 3 , userLoginState: "USER IS LOGGED IN AND VERIFIED"})
-      }
-
-      }).catch(err => this.setState({loginError: err.message}))
+      // NOT EXISTING USER, GO TO PHONE VERIFICATION
+        this.setState({onStep: this.state.onStep + 1
       })
+    })
 
-    auth.onAuthStateChanged(authState => console.log(authState))
     this.emailInput.value = ''; this.passwordInput.value = '';
   }
 
   addPhoneNumber(e){
-    e.preventDefault(); // <- prevent form submit from reloading the page
+    // prevent form submit from reloading the page    
+    e.preventDefault();
 
     if (toString(this.phoneNumberInput.value).length < 10) {
       this.setState({loginError: "Minimum of 10 digits"})
       throw "MIN 10 DIGITS"
     } else {
-
     this.setState({onStep: this.state.onStep + 1})
-
     let parsedPhoneNum = parsePhoneNumberFromString( this.phoneNumberInput.value, 'US').number
-    
     this.setState({
       phoneNumber: parsedPhoneNum
     })
     fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/sendVerificationCode?pn=${parsedPhoneNum}`).then(res => {
+      console.log(this.state.phoneNumber)
     })
     
-
     this.phoneNumberInput.value = '';
   }
   }
 
   verifyPhone(e) {
+    // prevent form submit from reloading the page    
     e.preventDefault();
 
     this.setState({
       verificationCode: this.verificationCodeInput.value
     })
 
-    fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/checkVerificationCode?pn=${this.state.phoneNumber}&vc=${this.verificationCodeInput.value}&uid=${this.state.uid}`).then(res => {
+    fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/checkVerificationCode?pn=${this.state.phoneNumber}&vc=${this.verificationCodeInput.value}`).then(res => {
       if (res.status === 200) {
-        this.setState({onStep: this.state.onStep + 1, userLoginState: "USER IS LOGGED IN AND VERIFIED"})
+        auth.createUserWithEmailAndPassword(this.state.email, this.state.password).then(res => {
+          console.log(this.state.phoneNumber)
+          fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/addPhoneNumber?pn=${this.state.phoneNumber}&uid=${res.user.uid}`)
+        })
         return 1;
       }
       else {

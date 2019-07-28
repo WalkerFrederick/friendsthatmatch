@@ -3,6 +3,8 @@ import firebase from 'firebase'
 import fire from '../fire';
 
 import {Redirect} from 'react-router-dom'
+import { connect } from 'react-redux'
+
 
 
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -120,9 +122,9 @@ class LoginAccount extends React.Component {
   }
 
   render() {
-    if (this.state.onStep === 4) {
-        return  <Redirect to='/' />
-      }
+    if (this.props.auth === true) {
+      return  <Redirect to='/' />
+    }
     return (
       <div>
         <IonGrid className="login-grid">
@@ -180,4 +182,8 @@ class LoginAccount extends React.Component {
   )}
 }
 
-export default LoginAccount;
+const mapStateToProps = state => ({
+  auth: state.auth.isAuth
+})
+
+export default connect(mapStateToProps)(LoginAccount);
