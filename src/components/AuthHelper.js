@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider, connect } from 'react-redux'
-import { updateAuthIn, updateAuthOut } from '../actions/authActions'
+import { updateAuthIn, updateAuthOut, updateCurrentUser } from '../actions/authActions'
 import store from '../store'
 import { BrowserRouter as Router, Route, withRouter, Redirect, Switch } from 'react-router-dom';
 
@@ -107,6 +107,7 @@ class AuthHelper extends React.Component {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
           this.props.updateAuthIn()
+          this.props.updateCurrentUser(user)
         
       } else {
         console.log("ERROR")
@@ -145,6 +146,6 @@ const mapStateToProps = state => ({
   auth: state.auth.isAuth
 })
 
-export default connect(mapStateToProps, { updateAuthIn, updateAuthOut }, null, {
+export default connect(mapStateToProps, { updateAuthIn, updateAuthOut, updateCurrentUser }, null, {
   pure: false
 })(AuthHelper, LoginRequiredRoute, authRoutes);

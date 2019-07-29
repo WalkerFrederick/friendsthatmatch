@@ -48,6 +48,7 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
     if (request.query.vc*1 === doc.data().code*1) {
         response.status(200).send({"data": Date.now()})
     } else {
+      console.log(request.query.vc*1 === doc.data().code*1, request.query.vc*1, doc.data().code*1)
         response.status(401).send()
     }
 
@@ -60,6 +61,18 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 
   admin.auth().updateUser(request.query.uid, {
       phoneNumber: `+${request.query.pn}`,
+    })
+      .then(function(userRecord) {
+        // See the UserRecord reference doc for the contents of userRecord.
+        console.log('Successfully updated user', userRecord.toJSON());
+        return;
+      })
+      .catch(function(error) {
+        console.log(request.query.pn, 'Error updating user:', error);
+      });
+
+    admin.auth().updateUser(request.query.uid, {
+      displayName: request.query.dn,
     })
       .then(function(userRecord) {
         // See the UserRecord reference doc for the contents of userRecord.

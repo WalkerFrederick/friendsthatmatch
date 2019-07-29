@@ -26,7 +26,9 @@ class SearchView extends React.Component {
   render() {
     return (
       <PageLayout>
-      SEARCH    
+        <div className="profile">
+          
+        </div>    
       </PageLayout> 
   )}
 }

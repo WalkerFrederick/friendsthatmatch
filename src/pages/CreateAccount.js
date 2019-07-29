@@ -28,6 +28,8 @@ class CreateAccount extends React.Component {
      onStep: 1,
      userLoginState: "logged Out",
      loginError: "",
+     displayName: "",
+     lastName: "",
     
     }; // <- set up react state
   }
@@ -90,10 +92,7 @@ class CreateAccount extends React.Component {
 
     fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/checkVerificationCode?pn=${this.state.phoneNumber}&vc=${this.verificationCodeInput.value}`).then(res => {
       if (res.status === 200) {
-        auth.createUserWithEmailAndPassword(this.state.email, this.state.password).then(res => {
-          console.log(this.state.phoneNumber)
-          fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/addPhoneNumber?pn=${this.state.phoneNumber}&uid=${res.user.uid}`)
-        })
+        this.setState({onStep: this.state.onStep + 1})
         return 1;
       }
       else {
@@ -101,6 +100,24 @@ class CreateAccount extends React.Component {
       }
       
     }).catch(err => this.setState({userLoginState: "USER AUTH FAILED", loginError: "code not valid"}))
+  }
+
+  updateProfile(e) {
+    // prevent form submit from reloading the page    
+    e.preventDefault();
+
+    this.setState({
+      displayName: this.firstNameInput.value,
+    })
+
+      
+    auth.createUserWithEmailAndPassword(this.state.email, this.state.password).then(res => {
+      console.log(this.state.phoneNumber)
+      fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/addPhoneNumber?pn=${this.state.phoneNumber}&uid=${res.user.uid}&dn=${this.firstNameInput.value}`)
+    })
+
+      
+    
   }
 
   render() {
@@ -149,11 +166,23 @@ class CreateAccount extends React.Component {
           <IonRow id="login-form-row" className={`login-row ion-align-items-center ${this.state.onStep === 3 ? `` : `hidden-step`}`}>
             <IonCol size="12"> 
               <h1>Step 3</h1>
-              <p>Verify Phone Number</p>
+              <p>Verify phone number</p>
               <h2 className="login-form-error">{this.state.loginError}</h2>
               <form onSubmit={this.verifyPhone.bind(this)} className="ion-text-center">
               <IonCard mode="ios"><IonInput className="ion-text-left" type="text" placeholder="Verification Code" ref={ el => this.verificationCodeInput = el }/></IonCard>
               <IonButton mode="ios" expand="full" type="submit">Verify</IonButton>
+              </form>
+            </IonCol>
+          </IonRow>
+          <IonRow id="login-form-row" className={`login-row ion-align-items-center ${this.state.onStep === 4 ? `` : `hidden-step`}`}>
+            <IonCol size="12"> 
+              <h1>Step 4</h1>
+              <p>Tell us about yourself</p>
+              <h2 className="login-form-error">{this.state.loginError}</h2>
+              <form onSubmit={this.updateProfile.bind(this)} className="ion-text-center">
+              <IonCard mode="ios"><IonInput className="ion-text-left" type="text" placeholder="First Name" ref={ el => this.firstNameInput = el }/></IonCard>
+              <IonCard mode="ios"><IonInput className="ion-text-left" type="text" placeholder="Last Name" ref={ el => this.lastNameInput = el }/></IonCard>
+              <IonButton mode="ios" expand="full" type="submit">Add To Profile</IonButton>
               </form>
             </IonCol>
           </IonRow>

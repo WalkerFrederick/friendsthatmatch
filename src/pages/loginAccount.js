@@ -135,13 +135,13 @@ class LoginAccount extends React.Component {
           </IonRow>
           <IonRow id="login-form-row" className={`login-row ion-align-items-center ${this.state.onStep === 1 ? `` : `hidden-step`}`}>
             <IonCol size="12"> 
-              <h1>Login</h1>
+              <h1>Sign In</h1>
               <p>Login to your account</p>
               <h2 className="login-form-error">{this.state.loginError}</h2>
               <form onSubmit={this.LoginAccount.bind(this)} className="ion-text-center">
               <IonCard mode="ios"><IonInput className="ion-text-left" type="text" placeholder="Email" ref={ el => this.emailInput = el }/></IonCard>
               <IonCard mode="ios"><IonInput className="ion-text-left" type="password" placeholder="Password" ref={ el => this.passwordInput = el }/></IonCard>
-              <IonButton mode="ios" expand="full" type="submit">Login</IonButton>
+              <IonButton mode="ios" expand="full" type="submit">Sign In</IonButton>
               <IonButton mode="ios" class="button-reverse" expand="full" onClick={e => {
                     e.preventDefault();
                     this.props.history.push('/createaccount');

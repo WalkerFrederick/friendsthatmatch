@@ -1,6 +1,18 @@
 #root {
   height: 100%;
 }
+
+.span-tag {
+  display: inline-block;
+  background: #ffa597;
+  color: white;
+  font-size: .5rem;
+  padding: 3px 10px;
+  border-radius: .55rem;
+  margin-left: 5px;
+}
+
+
 div {
   height: 100%;
 }
@@ -88,7 +100,8 @@ ion-toolbar .toolbar-container {
 }
 
 
-
+.page-layout{
+}
 
 /* SETTINGS STYLES */
 
@@ -100,4 +113,49 @@ ion-toolbar .toolbar-container {
 #delete-account-button {
   --background: none !important;
   --color: #F56565;
+}
+
+/* SETTINGS STYLES */
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.profile ion-card {
+  position: absolute;
+  width: 90%;
+  top: 56px;
+  left: 46%;
+  transform: translateX(-50%);
+  bottom: 0;
+  display: flex;
+  padding: 15px;
+  align-items: center;
+  flex-direction: column;
+
+}
+.profile h1 {
+  margin: 0 0 15px 0;
+  text-align: center;
+  font-size: 1rem;
+}
+.profile ion-avatar {
+  height: 120px;
+  width: 120px;
+  padding: 5px;
+  border: 2px solid #FFA597;
+}
+.profile .user-info {
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0;
+  border: 2px solid #FFA597;
+  border-radius: 1.25rem;
+  padding: 5px 10px;
+}
+.user-info p {
+  margin: 0;
+  margin-left: 5px;
 }

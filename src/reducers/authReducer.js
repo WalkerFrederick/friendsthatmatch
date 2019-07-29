@@ -1,9 +1,10 @@
-import {UPDATE_AUTH_IN, UPDATE_AUTH_OUT} from '../actions/types'
+import {UPDATE_AUTH_IN, UPDATE_AUTH_OUT, UPDATE_CURRENT_USER} from '../actions/types'
 
 
 
 const initialState = {
     isAuth: false,
+    user: {},
 }
 
 export default function(state = initialState, action) {
@@ -12,6 +13,8 @@ export default function(state = initialState, action) {
            return {...state, isAuth: action.payload}
         case UPDATE_AUTH_OUT: 
             return {...state, isAuth: action.payload}
+        case UPDATE_CURRENT_USER: 
+            return {...state, user: action.payload}
         default:
             return state
     }

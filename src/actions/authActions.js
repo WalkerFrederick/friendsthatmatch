@@ -1,4 +1,4 @@
-import {UPDATE_AUTH_IN, UPDATE_AUTH_OUT} from './types'
+import {UPDATE_AUTH_IN, UPDATE_AUTH_OUT, UPDATE_CURRENT_USER} from './types'
 
 export function updateAuthIn() {
     return function(dispatch){
@@ -14,6 +14,15 @@ export function updateAuthOut() {
         dispatch({
             type: UPDATE_AUTH_OUT,
             payload: false
+        })
+    }
+}
+
+export function updateCurrentUser(user) {
+    return function(dispatch){
+        dispatch({
+            type: UPDATE_CURRENT_USER,
+            payload: user
         })
     }
 }
