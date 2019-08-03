@@ -107,10 +107,15 @@ class AuthHelper extends React.Component {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
           this.props.updateAuthIn()
-          this.props.updateCurrentUser(user)
+          var currentUser = firebase.auth().currentUser;
+
+          if (currentUser) {
+            this.props.updateCurrentUser(currentUser)
+          } else {
+            this.props.updateCurrentUser(currentUser)
+          }
         
       } else {
-        console.log("ERROR")
         this.props.updateAuthOut()
       }
     });

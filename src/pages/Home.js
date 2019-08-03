@@ -5,6 +5,11 @@ import fire from '../fire';
 import '@ionic/core/css/ionic.bundle.css'
 import '../App.css'
 
+import { connect } from 'react-redux'
+
+
+import { updateAuthIn, updateAuthOut, updateCurrentUser } from '../actions/authActions'
+
 import PageLayout from '../components/PageLayout'
 
 import AuthHelper from '../components/AuthHelper'
@@ -19,7 +24,7 @@ class Home extends React.Component {
     }; // <- set up react state
   }
   componentWillMount(){
-   
+  
   }
 
   render() {
@@ -30,4 +35,8 @@ class Home extends React.Component {
   )}
 }
 
-export default Home;
+const mapStateToProps = state => ({
+  auth: state.auth.isAuth
+})
+
+export default connect(mapStateToProps, { updateCurrentUser })(Home);

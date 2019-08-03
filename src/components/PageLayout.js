@@ -43,12 +43,6 @@ class ListView extends React.Component {
         </IonButtons>
         <IonTitle mode="ios">FriendsThatMatch</IonTitle>
         <IonButtons slot="end">
-            <IonButton onClick={e => {
-            e.preventDefault();
-            this.props.history.push('/Settings');
-            }}>
-            <IosSettings fontSize="32px" color="#FFA597" />
-            </IonButton>
         </IonButtons>
         </IonToolbar>
         { this.props.children }

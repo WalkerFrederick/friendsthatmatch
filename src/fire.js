@@ -4,9 +4,10 @@ var config = {
   authDomain: "friendsthatmatch.firebaseapp.com",
   databaseURL: "https://friendsthatmatch.firebaseio.com",
   projectId: "friendsthatmatch",
-  storageBucket: "",
+  storageBucket: "gs://friendsthatmatch.appspot.com",
   messagingSenderId: "1018559950221",
   appId: "1:1018559950221:web:b88f109498c5d948"
 };
 var fire = firebase.initializeApp(config);
+
 export default fire;

@@ -2,19 +2,32 @@ import React from 'react';
 import firebase from 'firebase'
 import { connect } from 'react-redux'
 
+import { Plugins, CameraResultType, CameraSource } from '@capacitor/core';
+
+import { updateAuthIn, updateAuthOut, updateCurrentUser } from '../actions/authActions'
+
+
 import fire from '../fire';
 import {Redirect} from 'react-router-dom'
 
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
 
-import { IonCard, IonContent, IonItem, IonInput, IonButton, IonGrid, IonRow, IonCol, IonImg } from '@ionic/react'
+import { IonCard, IonContent, IonItem, IonInput, IonButton, IonGrid, IonRow, IonCol, IonImg, IonAvatar } from '@ionic/react'
 import '@ionic/core/css/ionic.bundle.css'
 import '../App.css'
 
 import logo from '../static/logo.png'
 
 var auth = firebase.auth();
+var storage = firebase.storage();
+
+
+const { Camera, Filesystem, App } = Plugins;
+
+
+
 
 class CreateAccount extends React.Component {
   constructor(props) {
@@ -30,10 +43,85 @@ class CreateAccount extends React.Component {
      loginError: "",
      displayName: "",
      lastName: "",
+     profilePicture: "",
     
     }; // <- set up react state
+
+    defineCustomElements(window);
+
+
+    App.addListener('appRestoredResult', (data: any) => {
+      console.log('Restored state:', data);
+      this.setState({profilePicture:data})
+    });
+
+    this.takePicture = this.takePicture.bind(this);
   }
 
+  async takePicture() {
+
+    console.log('Opening Camerea')
+    const image = await Plugins.Camera.getPhoto({
+      quality: 100,
+      allowEditing: false,
+      resultType: CameraResultType.Base64,
+      source: CameraSource.Camera
+    });
+    let imageFile = new File([], image.dataUrl)
+    let imageFileType = image.format
+
+    var encoded = image.base64String;
+
+    var decoded = atob(encoded);
+    var extension = undefined;
+
+    var lowerCase = decoded.toLowerCase();
+
+
+    if (lowerCase.indexOf("png") !== -1) extension = "png"
+    else if (lowerCase.indexOf("jpg") !== -1 || lowerCase.indexOf("jpeg") !== -1)
+        extension = "jpg"
+    else extension = "jpg";
+
+    console.log(decoded);
+
+    this.setState({profilePicture: decoded})
+
+
+
+    console.log(image)
+
+
+    auth.createUserWithEmailAndPassword(this.state.email, this.state.password).then(res => {
+      // Create a root reference
+      var storageRef = firebase.storage().ref();
+
+      // Create a reference to 'profile pic'
+      console.log(res)
+      let pofilePictureLocation = res.user.uid + '.' + extension;
+      var profilePictureRef = storageRef.child('profilepics/' + res.user.uid + '.' + extension);
+      profilePictureRef.putString(image.base64String, 'base64').then(snapshot => {
+        console.log('Uploaded a base64url string!');
+        profilePictureRef.getDownloadURL().then(async (url) => {
+          console.log(url)
+  
+          await fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/addPhoneNumber?pn=${this.state.phoneNumber}&uid=${res.user.uid}&dn=${this.state.displayName}&ppurl=${url}`).then(res => {
+
+            firebase.auth().currentUser.reload().then(user => {
+              let currentUser = firebase.auth().currentUser
+              this.props.updateCurrentUser(currentUser)
+              console.log(currentUser)
+            });
+
+          })
+          
+    
+        }).catch(err => console.log(err))
+      });
+
+    })
+  
+}
 
   // CREATE ACCOUNT HANDLER - STORE EMAIL AND PASSWORD IN STATE
   createAccount(e){
@@ -105,19 +193,15 @@ class CreateAccount extends React.Component {
   updateProfile(e) {
     // prevent form submit from reloading the page    
     e.preventDefault();
-
     this.setState({
-      displayName: this.firstNameInput.value,
-    })
+      displayName: this.firstNameInput.value + '' + this.lastNameInput.value, onStep: this.state.onStep + 1
+    })   
+  }
 
-      
-    auth.createUserWithEmailAndPassword(this.state.email, this.state.password).then(res => {
-      console.log(this.state.phoneNumber)
-      fetch(`https://us-central1-friendsthatmatch.cloudfunctions.net/addPhoneNumber?pn=${this.state.phoneNumber}&uid=${res.user.uid}&dn=${this.firstNameInput.value}`)
-    })
+  addProfilePicture(e) {
+    // prevent form submit from reloading the page    
+    e.preventDefault();
 
-      
-    
   }
 
   render() {
@@ -186,6 +270,17 @@ class CreateAccount extends React.Component {
               </form>
             </IonCol>
           </IonRow>
+          <IonRow id="login-form-row" className={`login-row ion-align-items-center ${this.state.onStep === 5 ? `` : `hidden-step`}`}>
+            <IonCol size="12"> 
+              <h1>Step 5</h1>
+              <p>Upload your profile picture</p>
+              <h2 className="login-form-error">{this.state.loginError}</h2>
+              <IonAvatar><img src={this.state.profilePicture}/></IonAvatar>
+              <form className="ion-text-center">
+              <IonButton mode="ios" expand="full" onClick={this.takePicture}>Upload</IonButton>
+              </form>
+            </IonCol>
+          </IonRow>
           <IonRow id="login-row-bottom" className="login-row ion-align-items-center">
             <IonCol size="12" class="ion-text-center">
 
@@ -200,4 +295,4 @@ const mapStateToProps = state => ({
   auth: state.auth.isAuth
 })
 
-export default connect(mapStateToProps)(CreateAccount);
+export default connect(mapStateToProps, { updateCurrentUser })(CreateAccount);

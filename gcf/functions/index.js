@@ -73,17 +73,19 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 
     admin.auth().updateUser(request.query.uid, {
       displayName: request.query.dn,
+      photoURL: request.query.ppurl,
     })
       .then(function(userRecord) {
         // See the UserRecord reference doc for the contents of userRecord.
         console.log('Successfully updated user', userRecord.toJSON());
+        response.status(200).send({"data": Date.now()})
         return;
       })
       .catch(function(error) {
         console.log(request.query.pn, 'Error updating user:', error);
-      });
+        response.status(400).send({"data": Date.now()})
 
-  response.status(200).send({"data": Date.now()})
+      });
 
 })
 

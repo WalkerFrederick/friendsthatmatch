@@ -11,6 +11,8 @@ import '../App.css'
 
 import IosSettings from 'react-ionicons/lib/IosSettings'
 
+import packageJSON from '../../package.json'
+
 
 import PageLayout from '../components/PageLayout'
 
@@ -26,6 +28,8 @@ export const Settings: React.FunctionComponent = () => {
 
     return (
       <PageLayout>
+        <div className="settings-page">
+        <h1>Release Version {packageJSON.version}</h1>
         <IonButton mode="ios" id="sign-out-button" onClick={e => {
     e.preventDefault();
     auth.signOut();
@@ -47,6 +51,7 @@ export const Settings: React.FunctionComponent = () => {
               });
             }}]}
         />
+        </div>
       </PageLayout>
   )
 }
