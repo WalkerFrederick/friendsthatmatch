@@ -1,0 +1,78 @@
+{
+  "_from": "capacitor-contacts-plugin",
+  "_id": "capacitor-contacts-plugin@1.0.7",
+  "_inBundle": false,
+  "_integrity": "sha512-s4BLgFIBUmv60OkLTPysBW/ECMlykbn2XAzdSF3YHfOdPAK/RS47WzOa0+cFTlrscchHBVvOCMz3+mOadIY6PA==",
+  "_location": "/capacitor-contacts-plugin",
+  "_phantomChildren": {
+    "tslib": "1.10.0"
+  },
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "capacitor-contacts-plugin",
+    "name": "capacitor-contacts-plugin",
+    "escapedName": "capacitor-contacts-plugin",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/capacitor-contacts-plugin/-/capacitor-contacts-plugin-1.0.7.tgz",
+  "_shasum": "5f9b9ee17a36e9fb2f927cd6be28c30c791cbd4e",
+  "_spec": "capacitor-contacts-plugin",
+  "_where": "C:\\Users\\walke\\Desktop\\friends-that-match",
+  "author": {
+    "name": "Kwabena Adu"
+  },
+  "bugs": {
+    "url": "https://github.com/capptivation/capacitor-plugin-contacts.git/issues"
+  },
+  "bundleDependencies": false,
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  },
+  "dependencies": {
+    "@capacitor/core": "latest"
+  },
+  "deprecated": false,
+  "description": "Contacts",
+  "devDependencies": {
+    "typescript": "^2.6.2"
+  },
+  "files": [
+    "dist/",
+    "ios/",
+    "android/",
+    "CapacitorContactsPlugin.podspec"
+  ],
+  "homepage": "https://github.com/capptivation/capacitor-plugin-contacts#readme",
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "native"
+  ],
+  "license": "Proprietary",
+  "main": "dist/esm/index.js",
+  "name": "capacitor-contacts-plugin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/capptivation/capacitor-plugin-contacts.git"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "rm -rf ./dist",
+    "prepublishOnly": "npm run build",
+    "watch": "tsc --watch"
+  },
+  "types": "dist/esm/index.d.ts",
+  "version": "1.0.7"
+}

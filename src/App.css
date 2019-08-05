@@ -171,3 +171,24 @@ ion-toolbar .toolbar-container {
   margin: 0;
   margin-left: 5px;
 }
+
+.listview {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.import-contacts {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.import-contacts ion-card {
+  padding: 15px;
+  box-shadow: 0px 10px 30px 0px rgba(250, 185, 168, .44);
+}
+.import-contacts ion-button {
+  box-shadow: 0px 10px 30px 0px rgba(250, 185, 168, .44);
+  --background: #FFA597;
+}
