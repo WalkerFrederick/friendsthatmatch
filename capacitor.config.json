@@ -1,7 +1,7 @@
 {
-  "appId": "com.urdev.friendsthatmatch",
-  "appName": "friendsthatmatch",
+  "appId": "io.ionic.starter",
+  "appName": "FriendsThatMatch",
   "bundledWebRuntime": false,
-  "npmClient": "yarn",
+  "npmClient": "npm",
   "webDir": "build"
 }
